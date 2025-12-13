@@ -12,6 +12,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler
+    public ResponseEntity<ErrorDto> handleImportException(ImportException exception){
+        log.error(exception.getMessage(), exception);
+
+        ErrorDto errorDto = ErrorDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Error importing file")
+                .build();
+
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ErrorDto> handleLaptopNotFoundException(LaptopNotFoundException exception){
 
         log.error(exception.getMessage(), exception);

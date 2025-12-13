@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ManufacturerService {
     List<ManufacturerResponseDto>  getAllManufacturers();
-    ManufacturerResponseDto createManufacturer(AddManufacturerDto addManufacturerDto);
+    ManufacturerResponseDto addManufacturer(AddManufacturerDto addManufacturerDto);
     ManufacturerResponseDto updateManufacturer(UUID manufacturerId, AddManufacturerDto addManufacturerDto);
-    void deleteManufacturer(UUID id);
+    void removeManufacturerById(UUID id);
 }

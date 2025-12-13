@@ -32,6 +32,7 @@ public class AddLaptopDto {
     @Range(min = 64, message = "Storage cannot be smaller than 64")
     private Integer storage;
 
+    @NotNull
     private UUID manufacturerId;
 
     private List<String> ports;

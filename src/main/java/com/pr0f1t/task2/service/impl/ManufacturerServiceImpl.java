@@ -30,7 +30,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     }
 
     @Override
-    public ManufacturerResponseDto createManufacturer(AddManufacturerDto addManufacturerDto) {
+    public ManufacturerResponseDto addManufacturer(AddManufacturerDto addManufacturerDto) {
 
         if(existsByName(addManufacturerDto.getName())){
             throw new ManufacturerExistsException("Manufacturer already exists");
@@ -58,8 +58,8 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     }
 
     @Override
-    public void deleteManufacturer(UUID id) {
-
+    public void removeManufacturerById(UUID id) {
+        manufacturerRepository.deleteById(id);
     }
 
     private boolean existsByName(String name) {

@@ -3,6 +3,7 @@ package com.pr0f1t.task2.service.impl;
 import com.pr0f1t.task2.dto.ImportResultDto;
 import com.pr0f1t.task2.dto.PageResponse;
 import com.pr0f1t.task2.dto.laptop.*;
+import com.pr0f1t.task2.exception.ImportException;
 import com.pr0f1t.task2.util.importer.ParseResult;
 import com.pr0f1t.task2.entity.Laptop;
 import com.pr0f1t.task2.entity.Manufacturer;
@@ -28,8 +29,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +70,8 @@ public class LaptopServiceImpl implements LaptopService {
     @Override
     public LaptopResponseDto getLaptopById(UUID laptopId) {
 
-        Laptop laptop = laptopRepository.findById(laptopId).orElseThrow(() -> new LaptopNotFoundException("Laptop not found"));
+        Laptop laptop = laptopRepository.findById(laptopId)
+                .orElseThrow(() -> new LaptopNotFoundException("Laptop not found"));
 
         return laptopMapper.toResponseDto(laptop);
     }
@@ -107,8 +111,8 @@ public class LaptopServiceImpl implements LaptopService {
     }
 
     @Override
-    public void removeLaptopById(String laptopId) {
-        laptopRepository.deleteById(UUID.fromString(laptopId));
+    public void removeLaptopById(UUID laptopId) {
+        laptopRepository.deleteById(laptopId);
     }
 
     @Override
@@ -126,23 +130,32 @@ public class LaptopServiceImpl implements LaptopService {
 
     @Transactional
     @Override
-    public ImportResultDto importData(InputStream stream, ExportType exportType) {
+    public ImportResultDto importData(MultipartFile file, ImportType exportType){
         FileImporterStrategy importer = fileImporterFactory.getFileImporter(ImportType.JSON);
 
-        ParseResult<ImportLaptopDto> parseResult = importer.importData(stream);
+        try{
 
-        for (ImportLaptopDto dto: parseResult.getResultList()){
-            try{
-                saveLaptop(dto);
-            }catch (Exception e){
-                parseResult.addFailure(e.getMessage());
+            ParseResult<ImportLaptopDto> parseResult = importer.importData(file.getInputStream());
+
+            for (ImportLaptopDto dto: parseResult.getResultList()){
+                try{
+                    saveLaptop(dto);
+                }catch (Exception e){
+                    parseResult.addFailure(e.getMessage());
+                }
             }
+
+            parseResult.getErrorList()
+                    .forEach(log::warn);
+
+            return new ImportResultDto(parseResult.getSuccessfulCount(), parseResult.getFailedCount());
+
+        }catch (IOException e){
+
+            throw new ImportException("Error reading JSON file");
+
         }
 
-        parseResult.getErrorList()
-                .forEach(log::warn);
-
-        return new ImportResultDto(parseResult.getSuccessfulCount(), parseResult.getFailedCount());
     }
 
 

@@ -7,8 +7,11 @@ import com.pr0f1t.task2.dto.laptop.LaptopSearchRequest;
 import com.pr0f1t.task2.dto.laptop.LaptopResponseDto;
 import com.pr0f1t.task2.dto.laptop.LaptopShortResponseDto;
 import com.pr0f1t.task2.util.exporter.ExportType;
+import com.pr0f1t.task2.util.importer.ImportType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
@@ -20,7 +23,7 @@ public interface LaptopService {
     LaptopResponseDto updateLaptop(UUID laptopId, AddLaptopDto addLaptopDto);
     PageResponse<LaptopShortResponseDto> getAllLaptops(LaptopSearchRequest laptopSearchRequest);
     ByteArrayInputStream generateReport(LaptopSearchRequest laptopSearchRequest, ExportType exportType);
-    ImportResultDto importData(InputStream stream, ExportType exportType);
-    void removeLaptopById(String laptopId);
+    ImportResultDto importData(MultipartFile file, ImportType exportType);
+    void removeLaptopById(UUID laptopId);
 
 }

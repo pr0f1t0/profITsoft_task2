@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Controller
-@RequestMapping(path = "/api/laptop")
+@RequestMapping(path = "/api/laptops")
 @RequiredArgsConstructor
 public class LaptopController {
 

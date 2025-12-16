@@ -1,6 +1,7 @@
 package com.pr0f1t.task2.dto.laptop;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class LaptopSearchRequest {
 
     private List<UUID> manufacturers;
